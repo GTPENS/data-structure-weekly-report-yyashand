@@ -1,0 +1,33 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+Node* head = NULL;
+
+void newData(int data) {
+    Node* newNode = new Node;
+    newNode->data = data;
+    newNode->next = head;
+    head = newNode;
+}
+
+void list() {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << endl;
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    newData(10);
+    newData(20);
+    newData(30);
+    list();
+    return 0;
+}

@@ -1,0 +1,179 @@
+// Nama    : Tiyyasha Ananda Mufti Hanifah
+// NRP     : 5223600011
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Define Employee structure
+struct Employee {
+    string NIP;
+    string NAMA;
+};
+
+// Function to compare employees based on NIP (ascending order)
+bool compareNIPAscending(const Employee& e1, const Employee& e2) {
+    return e1.NIP < e2.NIP;
+}
+
+// Function to compare employees based on NIP (descending order)
+bool compareNIPDescending(const Employee& e1, const Employee& e2) {
+    return e1.NIP > e2.NIP;
+}
+
+// Function to compare employees based on NAMA (ascending order)
+bool compareNAMAAscending(const Employee& e1, const Employee& e2) {
+    return e1.NAMA < e2.NAMA;
+}
+
+// Function to compare employees based on NAMA (descending order)
+bool compareNAMADescending(const Employee& e1, const Employee& e2) {
+    return e1.NAMA > e2.NAMA;
+}
+
+// Bubble Sort with iteration display and comparison counting
+void bubbleSort(vector<Employee>& employees, bool (*compareFunction)(const Employee&, const Employee&)) {
+    int comparisons = 0; // Initialize comparison counter
+    int swaps = 0;       // Initialize swap counter (for Bubble Sort)
+
+    for (int i = 0; i < employees.size() - 1; i++) {
+        bool swapped = false; // Flag to indicate if any swaps occurred in the current iteration
+
+        cout << "\nIteration " << i + 1 << ":" << endl;
+        for (const Employee& employee : employees) {
+            cout << "NIP: " << employee.NIP << ", NAMA: " << employee.NAMA << endl;
+        }
+
+        for (int j = 0; j < employees.size() - i - 1; j++) {
+            comparisons++;
+            if (compareFunction(employees[j], employees[j + 1])) {
+                swap(employees[j], employees[j + 1]);
+                swapped = true;
+            }
+        }
+
+        if (!swapped) {
+            break; // Early termination if no swaps occur (already sorted)
+        }
+    }
+
+    cout << "\nComparisons: " << comparisons << endl;
+    cout << "Swaps (Bubble Sort): " << swaps << endl; // Print swaps for Bubble Sort
+}
+
+// Shell Sort with iteration display and comparison counting (gap calculation omitted for brevity)
+void shellSort(vector<Employee>& employees, bool (*compareFunction)(const Employee&, const Employee&)) {
+    int comparisons = 0; // Initialize comparison counter
+    int shifts = 0;      // Initialize shift counter (for Shell Sort)
+
+    for (int gap = employees.size() / 2; gap > 0; gap /= 2) {
+        cout << "\nGap: " << gap << endl;
+
+        for (int i = gap; i < employees.size(); i++) {
+            int j = i;
+            while (j >= gap && compareFunction(employees[j - gap], employees[j])) {
+                comparisons++;
+                swap(employees[j], employees[j - gap]);
+                j -= gap;
+                shifts++; // Increment shift counter for Shell Sort
+            }
+
+            cout << "\nSublist after insertion (gap " << gap << "):" << endl;
+            for (const Employee& employee : employees) {
+                cout << "NIP: " << employee.NIP << ", NAMA: " << employee.NAMA << endl;
+            }
+        }
+    }
+
+    cout << "\nComparisons: " << comparisons << endl;
+    cout << "Shifts (Shell Sort): " << shifts << endl;
+}
+
+int main() {
+    // Initialize employee data
+    vector<Employee> employees = {
+      {"12345", "Budi"},
+      {"67890", "Andi"},
+      {"45678", "Cici"},
+      {"23456", "Dedi"},
+      {"89012", "Eni"},
+    };
+
+    // Choose sorting method, order, and comparison function
+    int choiceMethod;
+    int choiceOrder;
+    bool (*compareFunction)(const Employee&, const Employee&);
+
+    cout << "Pilih metode pengurutan (1 - Bubble Sort, 2 - Shell Sort): ";
+    cin >> choiceMethod;
+
+    cout << "Pilih urutan pengurutan (1 - Ascending, 2 - Descending): ";
+    cin >> choiceOrder;
+
+    cout << "Pilih kriteria pengurutan (1 - NIP, 2 - NAMA): ";
+    cin >> choiceMethod;
+
+    if (choiceMethod == 1) {
+        compareFunction = compareNIPAscending;
+    }
+    else if (choiceMethod == 2) {
+        compareFunction = compareNIPDescending;
+    }
+    else if (choiceMethod == 3) {
+        compareFunction = compareNAMAAscending;
+    }
+    else if (choiceMethod == 4) {
+        compareFunction = compareNAMADescending;
+    }
+    else {
+        cout << "Pilihan tidak valid!" << endl;
+        return 0;
+    }
+
+    // Call the chosen sorting function
+    if (choiceMethod == 1) {
+        if (choiceOrder == 1) {
+            bubbleSort(employees, compareFunction); // Bubble Sort ascending
+        }
+        else {
+            // Reverse the comparison function for descending order
+            auto compareFunctionDescending = [](const Employee& e1, const Employee& e2) {
+                return compareFunction(e2, e1);
+                };
+            bubbleSort(employees, compareFunctionDescending); // Bubble Sort descending
+        }
+    }
+    else if (choiceMethod == 2) {
+        if (choiceOrder == 1) {
+            shellSort(employees, compareFunction); // Shell Sort ascending
+        }
+        else {
+            // Reverse the comparison function for descending order
+            auto compareFunctionDescending = [](const Employee& e1, const Employee& e2) {
+                return compareFunction(e2, e1);
+                };
+            shellSort(employees, compareFunctionDescending); // Shell Sort descending
+        }
+    }
+    else {
+        // Sort using the standard sort function with the chosen comparison function
+        if (choiceOrder == 1) {
+            sort(employees.begin(), employees.end(), compareFunction); // Standard sort ascending
+        }
+        else {
+            // Reverse the comparison function for descending order
+            auto compareFunctionDescending = [](const Employee& e1, const Employee& e2) {
+                return compareFunction(e2, e1);
+                };
+            sort(employees.begin(), employees.end(), compareFunctionDescending); // Standard sort descending
+        }
+    }
+
+    // Print the sorted employee data
+    cout << "\nData Pegawai yang Telah Diurutkan:" << endl;
+    for (const Employee& employee : employees) {
+        cout << "NIP: " << employee.NIP << ", NAMA: " << employee.NAMA << endl;
+    }
+
+    return 0;
+}

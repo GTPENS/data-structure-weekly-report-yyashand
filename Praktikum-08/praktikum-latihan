@@ -1,0 +1,185 @@
+// Nama	: Tiyyasha Ananda Mufti Hanifah
+// NRP	: 5223600011
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Define Employee structure
+struct Employee {
+    string NIP;
+    string NAMA;
+};
+
+// Global variables to count comparisons and swaps
+int comparisons = 0;
+int swaps = 0;
+
+// Function to compare employees based on NIP (ascending order)
+bool compareNIPAscending(const Employee& e1, const Employee& e2) {
+    comparisons++;
+    return e1.NIP < e2.NIP;
+}
+
+// Function to compare employees based on NIP (descending order)
+bool compareNIPDescending(const Employee& e1, const Employee& e2) {
+    comparisons++;
+    return e1.NIP > e2.NIP;
+}
+
+// Function to compare employees based on NAMA (ascending order)
+bool compareNAMAAscending(const Employee& e1, const Employee& e2) {
+    comparisons++;
+    return e1.NAMA < e2.NAMA;
+}
+
+// Function to compare employees based on NAMA (descending order)
+bool compareNAMADescending(const Employee& e1, const Employee& e2) {
+    comparisons++;
+    return e1.NAMA > e2.NAMA;
+}
+
+// Function to perform partition step in Quick Sort
+int partition(vector<Employee>& arr, int low, int high, bool (*compareFunction)(const Employee&, const Employee&)) {
+    Employee pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (compareFunction(arr[j], pivot)) {
+            i++;
+            swap(arr[i], arr[j]);
+            swaps++;
+        }
+        comparisons++;
+    }
+
+    swap(arr[i + 1], arr[high]);
+    swaps++;
+    return i + 1;
+}
+
+// Function to implement Quick Sort
+void quickSort(vector<Employee>& arr, int low, int high, bool (*compareFunction)(const Employee&, const Employee&)) {
+    if (low < high) {
+        int pi = partition(arr, low, high, compareFunction);
+
+        quickSort(arr, low, pi - 1, compareFunction);
+        quickSort(arr, pi + 1, high, compareFunction);
+    }
+}
+
+// Function to perform merge step in Merge Sort
+void merge(vector<Employee>& arr, int l, int m, int r, bool (*compareFunction)(const Employee&, const Employee&)) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    vector<Employee> L(n1), R(n2);
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (compareFunction(L[i], R[j])) {
+            arr[k] = L[i];
+            i++;
+        }
+        else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+        comparisons++;
+        swaps++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+        swaps++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+        swaps++;
+    }
+}
+
+// Function to implement Merge Sort
+void mergeSort(vector<Employee>& arr, int l, int r, bool (*compareFunction)(const Employee&, const Employee&)) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+
+        mergeSort(arr, l, m, compareFunction);
+        mergeSort(arr, m + 1, r, compareFunction);
+
+        merge(arr, l, m, r, compareFunction);
+    }
+}
+
+int main() {
+    // Initialize employee data
+    vector<Employee> employees = {
+        {"12345", "Budi"},
+        {"67890", "Andi"},
+        {"45678", "Cici"},
+        {"23456", "Dedi"},
+        {"89012", "Eni"},
+    };
+
+    // Choose sorting method, order, and comparison function
+    int choiceMethod;
+    int choiceOrder;
+    bool (*compareFunction)(const Employee&, const Employee&);
+
+    cout << "Pilih metode pengurutan (1 - Quick Sort, 2 - Merge Sort): ";
+    cin >> choiceMethod;
+
+    cout << "Pilih urutan pengurutan (1 - Ascending, 2 - Descending): ";
+    cin >> choiceOrder;
+
+    cout << "Pilih kriteria pengurutan (1 - NIP, 2 - NAMA): ";
+    int choiceCriteria;
+    cin >> choiceCriteria;
+
+    if (choiceCriteria == 1) {
+        compareFunction = (choiceOrder == 1) ? compareNIPAscending : compareNIPDescending;
+    }
+    else if (choiceCriteria == 2) {
+        compareFunction = (choiceOrder == 1) ? compareNAMAAscending : compareNAMADescending;
+    }
+    else {
+        cout << "Pilihan tidak valid!" << endl;
+        return 0;
+    }
+
+    // Sort the employee data using the chosen method, order, and comparison function
+    if (choiceMethod == 1) {
+        quickSort(employees, 0, employees.size() - 1, compareFunction);
+    }
+    else if (choiceMethod == 2) {
+        mergeSort(employees, 0, employees.size() - 1, compareFunction);
+    }
+    else {
+        cout << "Pilihan tidak valid!" << endl;
+        return 0;
+    }
+
+    // Print the sorted employee data
+    cout << "\nData Pegawai yang Telah Diurutkan:" << endl;
+    for (const Employee& employee : employees) {
+        cout << "NIP: " << employee.NIP << ", NAMA: " << employee.NAMA << endl;
+    }
+
+    // Print the number of comparisons and swaps
+    cout << "\nJumlah perbandingan: " << comparisons << endl;
+    cout << "Jumlah pergeseran: " << swaps << endl;
+
+    return 0;
+}
